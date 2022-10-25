@@ -1,0 +1,316 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "cepsa-adf"
+		},
+		"c_drive_somefoldername_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'c_drive_somefoldername'"
+		},
+		"vm_shir_targeti_somefoldername_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'vm_shir_targeti_somefoldername'"
+		},
+		"c_drive_somefoldername_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "c:\\somefoldername"
+		},
+		"c_drive_somefoldername_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "targetikuser"
+		},
+		"vm_shir_targeti_somefoldername_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\vm-shir-targeti\\somefoldername"
+		},
+		"vm_shir_targeti_somefoldername_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "targetikuser"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/cepsa-shir')]",
+			"type": "Microsoft.DataFactory/factories/integrationRuntimes",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"type": "SelfHosted",
+				"typeProperties": {}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/c_drive_somefoldername')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('c_drive_somefoldername_properties_typeProperties_host')]",
+					"userId": "[parameters('c_drive_somefoldername_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('c_drive_somefoldername_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "cepsa-shir",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/cepsa-shir')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/vm_shir_targeti_somefoldername')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "FileServer",
+				"typeProperties": {
+					"host": "[parameters('vm_shir_targeti_somefoldername_properties_typeProperties_host')]",
+					"userId": "[parameters('vm_shir_targeti_somefoldername_properties_typeProperties_userId')]",
+					"password": {
+						"type": "SecureString",
+						"value": "[parameters('vm_shir_targeti_somefoldername_password')]"
+					}
+				},
+				"connectVia": {
+					"referenceName": "cepsa-shir",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/integrationRuntimes/cepsa-shir')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NonWorkingInput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "vm_shir_targeti_somefoldername",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": "input.json"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/vm_shir_targeti_somefoldername')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NonWorkingOutput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "vm_shir_targeti_somefoldername",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": "output.json"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/vm_shir_targeti_somefoldername')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WorkingInput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "c_drive_somefoldername",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": "input.json"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/c_drive_somefoldername')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WorkingOutput')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "c_drive_somefoldername",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "Binary",
+				"typeProperties": {
+					"location": {
+						"type": "FileServerLocation",
+						"fileName": "output.json"
+					}
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/c_drive_somefoldername')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/NonWorkingCopyPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy file",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "FileServerReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "FileServerWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "NonWorkingInput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "NonWorkingOutput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-25T16:19:09Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/NonWorkingInput')]",
+				"[concat(variables('factoryId'), '/datasets/NonWorkingOutput')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/WorkingCopyPipeline')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy file",
+						"type": "Copy",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "BinarySource",
+								"storeSettings": {
+									"type": "FileServerReadSettings",
+									"recursive": true
+								},
+								"formatSettings": {
+									"type": "BinaryReadSettings"
+								}
+							},
+							"sink": {
+								"type": "BinarySink",
+								"storeSettings": {
+									"type": "FileServerWriteSettings"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "WorkingInput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "WorkingOutput",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						]
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"annotations": [],
+				"lastPublishTime": "2022-10-25T16:19:08Z"
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/WorkingInput')]",
+				"[concat(variables('factoryId'), '/datasets/WorkingOutput')]"
+			]
+		}
+	]
+}

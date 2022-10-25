@@ -1,0 +1,84 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "cepsa-adf"
+		},
+		"c_drive_somefoldername_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'c_drive_somefoldername'"
+		},
+		"vm_shir_targeti_somefoldername_password": {
+			"type": "secureString",
+			"metadata": "Secure string for 'password' of 'vm_shir_targeti_somefoldername'"
+		},
+		"c_drive_somefoldername_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "c:\\somefoldername"
+		},
+		"c_drive_somefoldername_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "targetikuser"
+		},
+		"vm_shir_targeti_somefoldername_properties_typeProperties_host": {
+			"type": "string",
+			"defaultValue": "\\\\vm-shir-targeti\\somefoldername"
+		},
+		"vm_shir_targeti_somefoldername_properties_typeProperties_userId": {
+			"type": "string",
+			"defaultValue": "targetikuser"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "cepsa-adf_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"c_drive_somefoldername_password": {
+						"value": "[parameters('c_drive_somefoldername_password')]"
+					},
+					"vm_shir_targeti_somefoldername_password": {
+						"value": "[parameters('vm_shir_targeti_somefoldername_password')]"
+					},
+					"c_drive_somefoldername_properties_typeProperties_host": {
+						"value": "[parameters('c_drive_somefoldername_properties_typeProperties_host')]"
+					},
+					"c_drive_somefoldername_properties_typeProperties_userId": {
+						"value": "[parameters('c_drive_somefoldername_properties_typeProperties_userId')]"
+					},
+					"vm_shir_targeti_somefoldername_properties_typeProperties_host": {
+						"value": "[parameters('vm_shir_targeti_somefoldername_properties_typeProperties_host')]"
+					},
+					"vm_shir_targeti_somefoldername_properties_typeProperties_userId": {
+						"value": "[parameters('vm_shir_targeti_somefoldername_properties_typeProperties_userId')]"
+					}
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
