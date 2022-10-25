@@ -1,0 +1,18 @@
+{
+	"name": "NonWorkingInput",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "vm_shir_targeti_somefoldername",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "FileServerLocation",
+				"fileName": "input.json"
+			}
+		}
+	},
+	"type": "Microsoft.DataFactory/factories/datasets"
+}

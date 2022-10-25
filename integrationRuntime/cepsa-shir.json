@@ -1,0 +1,6 @@
+{
+	"name": "cepsa-shir",
+	"properties": {
+		"type": "SelfHosted"
+	}
+}
